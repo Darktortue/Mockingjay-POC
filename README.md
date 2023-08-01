@@ -1,6 +1,6 @@
 # Mockingjay-POC
 
-Ugly PoC for the Mockingjay injection technique.
+Ugly PoC for the Mockingjay injection technique (https://www.securityjoes.com/post/process-mockingjay-echoing-rwx-in-userland-to-achieve-code-execution).
 
 The shellcode is a cmd/exec calc.
 
