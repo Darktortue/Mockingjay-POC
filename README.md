@@ -1,18 +1,39 @@
 # Mockingjay-POC
 
-Ugly PoC for the Mockingjay injection technique (https://www.securityjoes.com/post/process-mockingjay-echoing-rwx-in-userland-to-achieve-code-execution).
+PoC for the Mockingjay injection technique (https://www.securityjoes.com/post/process-mockingjay-echoing-rwx-in-userland-to-achieve-code-execution).
 
 What this code does :
 
-1. Find the offset of the RWX section in the hardcoded DLL
-2. Find the size of the RWX section in the hardcoded DLL
-3. Write Shellcode into the RWX section of the hardcoded DLL
-4. Execute Shellcode from the RWX section of the hardcoded DLL
+1. Find the offset of the RWX section in the DLL passed as an argument
+2. Find the size of the RWX section in the DLL passed as an argument
+3. Write Shellcode into the RWX section of the DLL passed as an argument
+4. Execute Shellcode from the RWX section of the DLL passed as an argument
+
+
+### Usage
+```ps1
+PS C:\Users\admin\source\repos\Mockingjay-POC\x64\Release> .\Mockingjay-POC.exe
+MOCKINGJAY SUPER ASCII ART
+
+Error: Please provide the path to the DLL as a positional argument.
+Usage: C:\Users\admin\source\repos\Mockingjay-POC\x64\Release\Mockingjay-POC.exe PATH_TO_DLL
+
+--------------------------------------------------------------------------------------------
+
+PS C:\Users\admin\source\repos\Mockingjay-POC\x64\Release> .\Mockingjay-POC.exe 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\usr\bin\msys-2.0.dll'
+MOCKINGJAY SUPER ASCII ART
+
+Base Adress : 210040000
+Section Offset : 1ec000
+Size of RWX section : 14848
+Address of RWX Section : 000000021022C000
+RWX section starts at 000000021022C000 and ends at 000000021022FA00
+Size of RWX section : 14848
+Size of shellcode : 461
+461 bytes of Sh3llc0d3 written to RWX Memory Region
+```
 
 
 #### TODO
-- Remove the hardcoded DLL path and get it from a command line argument
-- Create a seperate THREAD to execute the shellcode
-- Create 2 parts of the code :
-	- 1st part will be to scan a given directory (and its subdirectories) to find RWX section in DLLs. Then it will compare the size of the RWX sections found and compare them to the size of the shellcode. Finally, it will output the DLL that have a RWX section big enough for the hardcoded shellcode.
-	- 2nd part will be to perform the injection process by providing the path of DLL as an argument
+- Fix THREAD mess. For now, working great with simple calc shellcode but with a reverse shell, threads are not "independant" and parent one is stuck
+- Add RWXFinder in this code to do some kind of all-in-one program that will find vulnerable DLL, and then exploit them
