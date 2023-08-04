@@ -37,3 +37,4 @@ Size of shellcode : 461
 #### TODO
 - Fix THREAD mess. For now, working great with simple calc shellcode but with a reverse shell, threads are not "independant" and parent one is stuck
 - Add RWXFinder in this code to do some kind of all-in-one program that will find vulnerable DLL, and then exploit them
+- Need to work with XOR shellcode to avoid static AV detection
