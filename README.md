@@ -29,11 +29,11 @@ Usage: C:\Users\admin\source\repos\Mockingjay-POC\x64\Release\Mockingjay-POC.exe
 ```
 
 *RWXfinder* output example :
-![screen1](https://github.com/Darktortue/Mockingjay-POC/assets/11302315/94b8bcfc-2d1a-44c0-9646-39f98cdaad92)
+![screen1](https://github.com/Darktortue/Mockingjay-POC/assets/11302315/68a30bfc-2b4f-4b2f-aa67-5ccde8f8402e)
+
 
 *Mockingjay-POC* output example :
-![screen2](https://github.com/Darktortue/Mockingjay-POC/assets/11302315/baca8a97-7fb6-4519-869c-f7a150a649ba)
-
+![screen2](https://github.com/Darktortue/Mockingjay-POC/assets/11302315/4069e51c-a585-45a0-b265-1e8bdb2dbf5d)
 
 
 #### TODO
